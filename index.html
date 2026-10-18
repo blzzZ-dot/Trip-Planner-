@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+ <html lang="zh-CN">
+ <head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+ <title>✈️ 我的旅行规划</title>
+ <style>
+ *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+ :root{
+   --bg-primary:#f0f7f0;
+   --bg-secondary:#fff;
+   --accent:#2e7d5a;
+   --accent-light:#e8f5e9;
+   --accent-border:#a5d6a7;
+   --text-primary:#333;
+   --text-secondary:#666;
+   --card-bg:#fafdfa;
+   --shadow:0 2px 8px rgba(0,0,0,.06);
+   --safe-fall-duration:18s;
+   --safe-fall-distance:100vh;
+ }
+body.theme-forest{
+   --bg-primary:#B8C8D0;
+   --bg-secondary:#F5F3ED;
+   --accent:#5A7A6A;
+   --accent-light:#C8D8C8;
+   --accent-border:#98B0A8;
+   --text-primary:#3A4A40;
+   --text-secondary:#6A7A70;
+   --card-bg:#F8FAF5;
+   background:linear-gradient(180deg,#B8C8D0 0%,#A8C0A8 50%,#B8D0A8 100%);
+   background-attachment:fixed
+ }
+body.theme-night{
+   --bg-primary:#0B0C1E;
+   --bg-secondary:#252850;
+   --accent:#B8C0FF;
+   --accent-light:#383C70;
+   --accent-border:#505490;
+   --text-primary:#F0F0FF;
+   --text-secondary:#B0B4E0;
+   --card-bg:#1A1D40;
+   --box-shadow:0 2px 10px rgba(80,100,80,0.08);
+   background:linear-gradient(180deg,#080918 0%,#121535 35%, #1E1E4C 65%,#282860 100%);
+   background-attachment:fixed
+ }
+ body.theme-winter{
+   --bg-primary:#1c2838;
+   --bg-secondary:#27374d;
+   --accent:#94c5e8;
+   --accent-light:#354b66;
+   --accent-border:#5a7ea8;
+   --text-primary:#e0edf8;
+   --text-secondary:#a8c4e0;
+   --card-bg:#233347;
+   background:linear-gradient(180deg,#1E2640 0%,#2A3450 40%,#384466 70%,#445077 100%);
+   background-attachment:fixed
+ }
+body.theme-autumn{
+   --bg-primary:#B8A8B8;
+   --bg-secondary:#F6E2BD;
+   --accent:#D47A4C;
+   --accent-light:#F2D4B8;
+   --accent-border:#E0B898;
+   --text-primary:#5A4030;
+   --text-secondary:#8A7060;
+   --card-bg:#FFFAF0;
+   background:linear-gradient(175deg,#9A8AAA 0%,#C8B8B0 25%,#F0C890 55%,#F8E2B8 80%,#FFEED0 100%);
+ }
+ body.theme-sea{
+   --bg-primary:#A8D8EA;
+   --bg-secondary:#F0ECE0;
+   --accent:#4A9BC2;
+   --accent-light:#C8E7D9;
+   --accent-border:#8AC5D8;
+   --text-primary:#2A4A5A;
+   --text-secondary:#5B8095;
+   --card-bg:#FDF8F0;
+   background:linear-gradient(180deg,#A8D8EA,#B9E0ED);
+   background-attachment:fixed
+ }
+ body.theme-sakura{
+   --bg-primary:#BFA8B5;
+   --bg-secondary:#D8B4B6;
+   --accent:#9B6B78;
+   --accent-light:#E8D4D4;
+   --accent-border:#C8A8AC;
+   --text-primary:#4A3842;
+   --text-secondary:#7A6870;
+   --card-bg:#F6E8E0;
+   background:linear-gradient(160deg,#B59FB0 0%,#C9AEB8 30%, #E0C0C4 60%,#F0D8D0 100%);
+   background-attachment:fixed
+ }
+ body{
+   max-width:100%;min-height:100vh;margin:0 auto;padding:16px;padding-bottom:80px;
+   background:var(--bg-primary);font-family:"Comic Sans MS","Marker Felt","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+   font-size:16px;line-height:1.6;color:var(--text-primary);position:relative;overflow-x:hidden
+ }
+ .fall-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+ .particle{position:absolute;opacity:0;animation:fall linear infinite}
+ @keyframes snowfall{
+   0%{transform:translateY(-20px) translateX(0) rotate(0deg);opacity:0}
+   8%{opacity:.85}
+   95%{opacity:.7}
+   100%{transform:translateY(var(--safe-fall-distance)) translateX(30px) rotate(270deg);opacity:0}
+ }
+ @keyframes leaffall{
+   0%{transform:translateY(-20px) translateX(0) rotate(0deg);opacity:0}
+   8%{opacity:.75}
+   100%{transform:translateY(var(--safe-fall-distance)) translateX(-40px) rotate(-300deg);opacity:0}
+ }
+ @keyframes sakurafall{
+   0%{transform:translateY(-20px) translateX(0) rotate(0deg);opacity:0}
+   10%{opacity:.65}
+   100%{transform:translateY(var(--safe-fall-distance)) translateX(50px) rotate(180deg);opacity:0}
+ }
+ @keyframes starTwinkle{
+   0%,100%{opacity:.15;transform:scale(1)}
+   40%{opacity:.9;transform:scale(1.4)}
+   60%{opacity:.5;transform:scale(1.1)}
+ }
+ @keyframes beamFlicker{
+   0%,100%{opacity:.05;transform:scale(.8)}
+   50%{opacity:.25;transform:scale(1.3)}
+ }
+@keyframes seaSandFall{
+   0%{transform:translateY(-10px) rotate(0deg);opacity:0}
+   8%{opacity:.6}
+   92%{opacity:.4}
+   100%{transform:translateY(100vh) translateX(25px) rotate(180deg);opacity:0}
+ }
+ .star{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;animation:starTwinkle ease-in-out infinite;opacity:0}
+ .sunbeam{position:absolute;width:60px;height:60px;background:radial-gradient(circle,rgba(180,220,255,.25) 0%,transparent 70%);border-radius:50%;animation:beamFlicker ease-in-out infinite;opacity:0}
+ .page-content{position:relative;z-index:1}
+ h1{text-align:center;color:var(--accent);margin-bottom:16px;font-size:22px;font-weight:600}
+ h2{color:var(--accent);margin-bottom:12px;font-size:18px;font-weight:600;border-bottom:2px solid var(--accent-light);padding-bottom:8px}
+ h3{font-size:16px;color:var(--text-primary);margin:20px 0 8px;font-weight:600}
+ .theme-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;justify-content:center}
+ .theme-btn{width:42px;height:42px;border-radius:50%;border:3px solid transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .2s;background:var(--bg-secondary);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+ .theme-btn.active{border-color:var(--accent);transform:scale(1.15);box-shadow:0 2px 6px rgba(0,0,0,.2)}
+ .theme-btn:active{transform:scale(1.05)}
+ .tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+ .tab{flex:1;min-width:80px;padding:12px 8px;border:none;border-radius:12px;background:var(--accent-light);color:var(--accent);cursor:pointer;font-size:14px;font-weight:500;transition:all .15s}
+ .tab.active{background:var(--accent);color:#fff}
+ .tab:active{transform:scale(.97)}
+ .tab-content{display:none;background:var(--bg-secondary);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+ .tab-content.active{display:block}
+ .person-bar{display:flex;gap:10px;margin-bottom:16px;background:var(--accent-light);padding:8px;border-radius:12px}
+ .person-tab{flex:1;padding:12px 8px;border:none;border-radius:8px;background:transparent;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+ .person-tab.active{background:var(--accent);color:#fff;font-weight:600}
+ .person-name-input{background:transparent;border:none;text-align:center;font-size:16px;font-weight:500;outline:none;width:100%;color:inherit}
+ label{display:block;font-size:14px;color:var(--text-secondary);margin-top:12px;margin-bottom:4px}
+ input,select,textarea{width:100%;padding:12px;margin-bottom:12px;border:1px solid var(--accent-border);border-radius:10px;font-size:16px;background:var(--bg-secondary);color:var(--text-primary);font-family:inherit}
+ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+ textarea{min-height:100px;resize:vertical}
+ .btn{padding:12px 16px;border:none;border-radius:10px;cursor:pointer;font-size:15px;font-weight:500;min-height:44px;transition:all .15s;font-family:inherit}
+ .btn:active{transform:scale(.97)}
+ .btn-sm{padding:6px 8px;font-size:14px;min-height:32px;line-height:1}
+ .btn-tiny{padding:2px 6px;font-size:16px;min-height:28px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:6px;border:none;background:var(--accent-light);color:var(--accent);cursor:pointer;line-height:1}
+ .btn-tiny:active{filter:brightness(.85)}
+ .btn-primary{background:var(--accent);color:#fff}
+ .btn-primary:active{filter:brightness(.88)}
+ .btn-danger{background:#c62828;color:#fff}
+ .btn-outline{background:transparent;border:1px solid var(--accent);color:var(--accent)}
+ .btn-outline:active{background:var(--accent-light)}
+ .btn-outline-danger{border-color:#c62828;color:#c62828}
+ .toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(42,111,76,.92);color:#fff;padding:14px 24px;border-radius:12px;font-size:15px;z-index:9999;display:none;box-shadow:0 4px 12px rgba(0,0,0,.2);text-align:center;max-width:85%}
+ body.theme-night .toast,body.theme-winter .toast,body.theme-sea .toast,body.theme-autumn .toast,body.theme-sakura .toast{background:rgba(100,160,220,.9);color:#111}
+ .toast.show{display:block;animation:toastFade 1.8s ease forwards}
+ @keyframes toastFade{0%{opacity:0;transform:translate(-50%,-50%) scale(.9)}15%{opacity:1;transform:translate(-50%,-50%) scale(1)}85%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.9)}}
+ .card{background:var(--card-bg);border-radius:12px;padding:16px;margin-bottom:16px;border:1px solid var(--accent-border)}
+ .row-between{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+ .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+ .half{flex:1;min-width:140px}
+ .progress-container{margin:12px 0}
+ .progress-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;color:var(--text-secondary)}
+ .progress-bar{height:16px;background:var(--accent-light);border-radius:8px;overflow:hidden}
+ .progress-fill{height:100%;transition:width .4s ease;border-radius:8px}
+ .progress-fill.green{background:#4caf50}
+ .progress-fill.orange{background:#f59e0b}
+ .progress-fill.red{background:#ef4444}
+ .empty-hint{color:var(--text-secondary);font-size:14px;padding:30px;text-align:center}
+ .desc-text{font-size:14px;color:var(--text-secondary);margin:8px 0 16px;line-height:1.7}
+ .tip-box{background:var(--accent-light);border-left:3px solid var(--accent);padding:14px;border-radius:8px;margin:12px 0}
+ .tip-box h4{font-size:15px;margin-bottom:8px;color:var(--accent)}
+ .tip-box p{margin:4px 0;font-size:14px;color:var(--text-secondary);line-height:1.6}
+ .hidden-input{display:none}
+ .total-progress{background:var(--accent-light);border-radius:12px;padding:16px;margin-bottom:20px}
+ .copy-bags-bar{display:flex;gap:8px;justify-content:flex-end;margin-bottom:12px;flex-wrap:wrap}
+ .bag-card{border:1px solid var(--accent-border);border-radius:12px;padding:16px;margin-bottom:16px;background:var(--card-bg)}
+ .bag-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+ .bag-name{font-size:16px;font-weight:600;color:var(--accent);border:none;background:transparent;outline:none;padding:4px;flex:1;min-width:120px}
+ .bag-progress-text{font-size:14px;color:var(--text-secondary)}
+ .select-all-row{padding:8px 0;border-bottom:1px dashed var(--accent-border);display:flex;align-items:center;gap:8px;margin-bottom:8px}
+ .item-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px dashed var(--accent-border);flex-wrap:wrap;transition:background .2s}
+ .item-row:last-child{border-bottom:none}
+ .item-checkbox{width:24px;height:24px;cursor:pointer;accent-color:var(--accent);flex-shrink:0}
+ .item-name{flex:1;font-size:15px;padding:4px;border:1px solid transparent;border-radius:4px;background:transparent;outline:none;min-width:100px;color:var(--text-primary)}
+ .item-name:focus{border-color:var(--accent-border);background:var(--bg-secondary)}
+ .item-actions{display:flex;gap:4px;align-items:center}
+ .checked{text-decoration:line-through;color:#888}
+ .add-bag-row,.add-day-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+ .add-bag-row input,.add-day-row input{flex:1;margin:0;min-width:150px}
+ .add-item-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+ .add-item-row input{flex:1;margin:0;padding:10px;font-size:15px;min-width:150px}
+ .day-card{border:1px solid var(--accent-border);border-radius:12px;padding:16px;margin-bottom:20px;background:var(--card-bg)}
+ .day-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid var(--accent-light);flex-wrap:wrap;gap:8px}
+ .day-title{font-size:16px;font-weight:600;color:var(--accent);border:none;background:transparent;outline:none;padding:4px;flex:1;min-width:120px}
+ .outfit-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:15px}
+ .outfit-item{background:var(--accent-light);border-radius:8px;padding:12px;border:1px solid var(--accent-border)}
+ .outfit-item label{display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;font-weight:500}
+ .outfit-item input{margin:0}
+ .upload-btn-wrapper{margin-top:8px}
+ .upload-btn{width:100%;padding:8px;font-size:14px;background:var(--bg-secondary);border:1px dashed var(--accent-border);color:var(--accent);border-radius:6px;cursor:pointer;text-align:center;min-height:36px;display:flex;align-items:center;justify-content:center}
+ .preview-img{max-width:80px;max-height:80px;border-radius:6px;margin-top:6px;display:none;object-fit:cover;border:1px solid var(--accent-border)}
+ .preview-img.show{display:block}
+ .preview-area{margin-top:24px;padding:20px;background:var(--accent-light);border-radius:12px;text-align:center}
+ .preview-area h3{margin-bottom:16px;text-align:center;color:var(--accent)}
+ .preview-row{display:flex;justify-content:center;gap:16px;width:100%;flex-wrap:wrap}
+ .preview-center{display:flex;flex-direction:column;align-items:center;gap:4px;margin:0 auto}
+ .preview-side{display:flex;flex-direction:column;gap:8px}
+ .preview-item-slot{width:90px;height:90px;border:2px dashed var(--accent-border);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--bg-secondary)}
+ .preview-item-slot img{width:100%;height:100%;object-fit:cover}
+ .preview-item-slot span{font-size:11px;color:var(--text-secondary)}
+ .expense-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+ .exp-tab{flex:1;min-width:90px;padding:10px 8px;border-radius:10px;background:var(--accent-light);border:none;cursor:pointer;font-size:14px;font-weight:500;color:var(--accent);transition:all .15s}
+ .exp-tab.active{background:var(--accent);color:#fff}
+ .filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+ .filter-bar label{font-size:14px;color:var(--text-secondary);margin:0}
+ .filter-bar input{width:auto;margin:0;padding:8px;font-size:14px}
+ .record-item{padding:12px 0;border-bottom:1px solid var(--accent-border);display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px}
+ .record-item:last-child{border-bottom:none}
+ .record-left{flex:1;min-width:180px}
+ .record-meta{font-size:13px;color:var(--text-secondary);margin-top:4px}
+ .record-right{text-align:right}
+ .record-amount{font-size:17px;font-weight:600}
+ .record-amount.income{color:#66bb6a}
+ .record-amount.expense{color:#ef5350}
+ .record-type-tag{display:inline-block;font-size:11px;padding:2px 6px;border-radius:4px;margin-left:6px}
+ .tag-personal{background:rgba(100,180,255,.25);color:#90caf9}
+ .tag-shared{background:var(--accent-light);color:var(--accent)}
+ .balance-display{text-align:center;padding:24px 16px;background:var(--accent-light);border-radius:16px;margin-bottom:20px}
+ .balance-label{font-size:14px;color:var(--text-secondary)}
+ .balance-value{font-size:32px;font-weight:700;color:var(--accent);margin:8px 0}
+ .balance-sub{font-size:13px;color:var(--text-secondary)}
+ .balance-warning{font-size:13px;color:#ef5350;margin-top:8px;display:none}
+ .balance-warning.show{display:block}
+ .form-toggle-bar{display:flex;gap:8px;margin-bottom:16px}
+ .form-toggle{flex:1;padding:10px;border:1px solid var(--accent-border);background:var(--accent-light);color:var(--accent);cursor:pointer;text-align:center;border-radius:8px;font-size:15px;font-weight:500;min-height:44px}
+ .form-toggle.active{border-color:var(--accent);background:var(--accent);color:#fff}
+ .form-section{display:none;padding:16px;background:var(--accent-light);border-radius:10px;margin-bottom:20px}
+ .form-section.active{display:block}
+ .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+ .summary-item{background:var(--accent-light);padding:16px 12px;border-radius:10px;text-align:center}
+ .summary-label{font-size:14px;color:var(--text-secondary)}
+ .summary-value{font-size:20px;font-weight:600;margin-top:6px;color:var(--accent)}
+ </style>
+ </head>
+ <body class="theme-forest">
+ <div class="fall-container" id="fallContainer"></div>
+ <div class="page-content">
+ <div class="toast" id="toast"></div>
+ <input type="file" id="importFileInput" class="hidden-input" accept=".json">
+ <input type="file" id="imageUploadInput" class="hidden-input" accept="image/*">
+ <h1>✈️ 我的旅行规划</h1>
+ <div class="theme-bar">
+ <button class="theme-btn active" data-theme="forest" title="清新森林">🌿</button>
+ <button class="theme-btn" data-theme="night" title="星空夜空">🌌</button>
+ <button class="theme-btn" data-theme="winter" title="飘雪冬日">❄️</button>
+ <button class="theme-btn" data-theme="autumn" title="暖阳秋日">🌅</button>
+ <button class="theme-btn" data-theme="sea" title="碧海暮色">🌊</button>
+ <button class="theme-btn" data-theme="sakura" title="樱花温柔">🌸</button>
+ </div>
+ <div class="person-bar">
+ <button class="person-tab active" data-person="0" id="personTab0"><input type="text" class="person-name-input" id="nameInput0" value="我"></button>
+ <button class="person-tab" data-person="1" id="personTab1"><input type="text" class="person-name-input" id="nameInput1" value="同伴"></button>
+ </div>
+ <div class="tabs">
+ <button class="tab active" data-tab="info">📋 信息</button>
+ <button class="tab" data-tab="bags">🧳 行李</button>
+ <button class="tab" data-tab="outfit">👗 穿搭</button>
+ <button class="tab" data-tab="expense">💰 开销</button>
+ <button class="tab" data-tab="notes">📝 备忘</button>
+ <button class="tab" data-tab="settings">🔧 数据</button>
+ </div>
+ <div class="tab-content active" id="info">
+ <h2>旅行基本信息</h2>
+ <label>旅行名称</label>
+ <input type="text" id="tripName" placeholder="例如：日本东京5日游">
+ <label>时间 / 地点</label>
+ <input type="text" id="tripTime" placeholder="例如：2026.10.20 - 10.24 东京">
+ <label>备注说明</label>
+ <textarea id="tripNote" placeholder="航班信息、酒店地址、注意事项…"></textarea>
+ <p style="margin-top:8px;font-size:14px;color:var(--text-secondary)">✅ 自动保存在本地</p>
+ </div>
+ <div class="tab-content" id="bags">
+ <h2>行李清单 — <span id="whoBags">我</span></h2>
+ <div class="copy-bags-bar">
+ <button class="btn btn-sm btn-outline" id="toggleSelectBtn">☑️ 选择复制</button>
+ <button class="btn btn-sm btn-outline" id="copySelectedBtn" style="display:none">📋 复制选中</button>
+ <button class="btn btn-sm btn-outline" id="copyOtherBagsBtn">📋 复制同伴行李</button>
+ </div>
+ <div class="total-progress">
+ <div style="font-size:15px;font-weight:600;color:var(--accent);margin-bottom:6px">📊 整体打包进度</div>
+ <div class="progress-label"><span>已打包：<span id="totalChecked">0</span>/<span id="totalAll">0</span> 件</span></div>
+ <div class="progress-bar"><div class="progress-fill green" id="totalProgressBar" style="width:0%"></div></div>
+ </div>
+ <div class="add-bag-row">
+ <input type="text" id="newBagName" placeholder="新分类：例如 护肤品">
+ <button class="btn btn-primary" id="addBagBtn">+ 新增分类</button>
+ </div>
+ <div id="bagCategories"></div>
+ </div>
+ <div class="tab-content" id="outfit">
+ <h2>每日穿搭 — <span id="whoOutfit">我</span></h2>
+ <div class="add-day-row"><button class="btn btn-primary" id="addDayBtn">+ 添加一天</button></div>
+ <div id="dayList"></div>
+ <div class="preview-area">
+ <h3>👗 今日搭配预览</h3>
+ <div class="preview-row">
+ <div class="preview-side" id="previewAccessories"><p style="font-size:12px;color:var(--text-secondary)">配饰</p></div>
+ <div class="preview-center">
+ <div class="preview-item-slot" id="previewOuter"><span>外套</span></div>
+ <div class="preview-item-slot" id="previewTop"><span>上衣</span></div>
+ <div class="preview-item-slot" id="previewBottom"><span>下装</span></div>
+ <div class="preview-item-slot" id="previewShoes"><span>鞋子</span></div>
+ </div>
+ <div class="preview-side" id="previewOthers"><p style="font-size:12px;color:var(--text-secondary)">其他</p></div>
+ </div>
+ </div>
+ </div>
+ <div class="tab-content" id="expense">
+ <h2>💰 旅行开销</h2>
+ <div class="expense-tabs">
+ <button class="exp-tab active" data-exptab="personal">👤 个人花费</button>
+ <button class="exp-tab" data-exptab="shared">🤝 共用资金池</button>
+ <button class="exp-tab" data-exptab="all">📊 全部记录</button>
+ </div>
+ <div id="exp-personal" style="display:block">
+ <div class="summary-grid">
+ <div class="summary-item"><div class="summary-label">我的花费</div><div class="summary-value" id="myPersonalTotal">$0.00</div></div>
+ <div class="summary-item"><div class="summary-label">同伴花费</div><div class="summary-value" id="partnerPersonalTotal">$0.00</div></div>
+ </div>
+ <div class="filter-bar">
+ <label>日期：</label><input type="date" id="filterDateFrom">
+ <span>至</span><input type="date" id="filterDateTo">
+ <button class="btn btn-sm btn-outline" id="applyFilterBtn">筛选</button>
+ <button class="btn btn-sm btn-outline" id="clearFilterBtn">清空</button>
+ </div>
+ <h3>➕ 记一笔个人花费</h3>
+ <div class="card">
+ <div class="row"><div class="half"><label>日期</label><input type="date" id="pDate"></div>
+ <div class="half"><label>谁的花费</label><select id="pOwner"><option value="me">我</option><option value="partner">同伴</option></select></div></div>
+ <div class="row"><div class="half"><label>类别</label><select id="pCategory"><option value="餐饮">🍽 餐饮</option><option value="交通">🚗 交通</option><option value="住宿">🏨 住宿</option><option value="门票">🎫 门票</option><option value="购物">🛍️ 购物</option><option value="小费">💵 小费</option><option value="其他">📌 其他</option></select></div>
+ <div class="half"><label>金额 $</label><input type="number" id="pAmount" step="0.01" min="0" placeholder="0.00"></div></div>
+ <label>备注</label>
+ <input type="text" id="pNote" placeholder="例如：买水、纪念品">
+ <button class="btn btn-primary" style="margin-top:8px" id="addPersonalBtn">✅ 保存记录</button>
+ </div>
+ <h3>个人花费记录</h3>
+ <div id="personalRecordList"><p class="empty-hint">暂无记录</p></div>
+ </div>
+ <div id="exp-shared" style="display:none">
+ <div class="balance-display">
+ <div class="balance-label">🤝 共用资金池 · 当前余额</div>
+ <div class="balance-value" id="sharedBalance">$0.00</div>
+ <div class="balance-sub">累计存入：<span id="totalIn">$0.00</span> &nbsp;|&nbsp; 总支出：<span id="totalOut">$0.00</span></div>
+ <div class="progress-container">
+ <div class="progress-label"><span>已用</span><span id="usagePercent">0%</span><span>剩余</span></div>
+ <div class="progress-bar"><div class="progress-fill green" id="sharedProgress" style="width:0%"></div></div>
+ </div>
+ <div class="balance-warning" id="lowBalanceWarning">⚠️ 余额偏低，记得补充资金哦</div>
+ <button class="btn btn-sm btn-outline" style="margin-top:12px" id="copyLedgerBtn">📋 复制</button>
+ </div>
+ <div class="form-toggle-bar">
+ <div class="form-toggle active" id="depositToggle">💰 存入资金</div>
+ <div class="form-toggle" id="spendToggle">💳 记录支出</div>
+ </div>
+ <div class="form-section active" id="depositForm">
+ <label>日期</label><input type="date" id="depositDate">
+ <label>金额 $</label><input type="number" id="depositAmount" step="0.01" min="0" placeholder="0.00">
+ <label>谁存入的</label><select id="depositor"><option value="me">我</option><option value="partner">同伴</option></select>
+ <label>备注</label><input type="text" id="depositNote" placeholder="例如：初始资金">
+ <button class="btn btn-primary" style="margin-top:8px" id="addDepositBtn">💰 确认存入</button>
+ </div>
+ <div class="form-section" id="spendForm">
+ <label>日期</label><input type="date" id="spendDate">
+ <label>类别</label><select id="spendCategory"><option value="餐饮">🍽️ 餐饮</option><option value="交通">🚕 交通</option><option value="住宿">🏨 住宿</option><option value="门票">🎡 门票</option><option value="购物">🛒 购物</option><option value="其他">📌 其他</option></select>
+ <label>金额 $</label><input type="number" id="spendAmount" step="0.01" min="0" placeholder="0.00">
+ <label>谁支付的</label><select id="payer"><option value="me">我</option><option value="partner">同伴</option></select>
+ <label>备注</label><input type="text" id="spendNote" placeholder="例如：晚餐">
+ <button class="btn btn-primary" style="margin-top:8px" id="addSpendBtn">💳 确认支出</button>
+ </div>
+ <h3>资金变动流水</h3>
+ <div id="sharedRecordList"><p class="empty-hint">暂无记录</p></div>
+ </div>
+ <div id="exp-all" style="display:none">
+ <div class="filter-bar">
+ <label>日期：</label><input type="date" id="allFilterFrom">
+ <span>至</span><input type="date" id="allFilterTo">
+ <button class="btn btn-sm btn-outline" id="applyAllBtn">筛选</button>
+ <button class="btn btn-sm btn-outline" id="clearAllBtn">清空</button>
+ </div>
+ <h3>全部记录</h3>
+ <div id="allRecordList"><p class="empty-hint">暂无记录</p></div>
+ </div>
+ </div>
+ <div class="tab-content" id="notes">
+ <h2>📝 旅行备忘 — <span id="whoNotes">我</span></h2>
+ <textarea id="notesText" placeholder="酒店地址、预约时间、紧急电话、退税信息…"></textarea>
+ <p style="margin-top:8px;font-size:14px;color:var(--text-secondary)">✅ 自动保存在本地</p>
+ </div>
+ <div class="tab-content" id="settings">
+ <h2>🔧 数据管理</h2>
+ <h3>📤 导出备份</h3>
+ <p class="desc-text">将所有数据保存为一个备份文件，可存到手机、发给亲友或存网盘。以后随时可以导入恢复。</p>
+ <button class="btn btn-primary" id="exportBtn">📤 导出并下载备份文件</button>
+ <h3 style="margin-top:24px">📥 导入恢复</h3>
+ <p class="desc-text">选择之前导出的备份文件，完整恢复所有数据。⚠️ 会覆盖当前内容！</p>
+ <button class="btn btn-outline" id="importBtn">📥 选择备份文件导入</button>
+ <h3 style="margin-top:24px">🔄 一键重置项目</h3>
+ <p class="desc-text">清空所有记录，保留分类结构和设置。适合下一次旅行重新开始。</p>
+ <button class="btn btn-danger" id="resetBtn">🔄 重置所有记录</button>
+ <h3 style="margin-top:24px">📲 添加到手机桌面</h3>
+ <div class="tip-box">
+ <h4>iPhone (Safari)</h4>
+ <p>打开文件 → 点分享 ⬆️ → 添加到主屏幕</p>
+ </div>
+ <div class="tip-box">
+ <h4>Android (Chrome)</h4>
+ <p>打开文件 → 点右上角 ⋮ → 添加到桌面</p>
+ </div>
+ </div>
+ </div>
+ <script>
+ let currentPerson=0,expenseFilter={from:'',to:''},allExpenseFilter={from:'',to:''};
+ let currentTheme='forest',imageUploadTarget=null;
+ let selectMode=false;
+ function showToast(m){const t=document.getElementById('toast');t.classList.remove('show');void t.offsetWidth;t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+ function getTodayDate(){return new Date().toISOString().split('T')[0]}
+ function newPersonData(){return{bags:[{name:'随身包',items:[]},{name:'行李箱',items:[]}],outfit:[],notes:''}}
+ function initData(){return{version:'V6.3',names:['我','同伴'],tripName:'',tripTime:'',tripNote:'',p0:newPersonData(),p1:newPersonData(),personalExpenses:[],sharedTransactions:[],theme:'forest'}}
+ function ensureDataStructure(d){if(!d.version)d.version='V6.3';if(!d.names)d.names=['我','同伴'];if(!d.p0)d.p0=newPersonData();if(!d.p1)d.p1=newPersonData();if(!d.personalExpenses)d.personalExpenses=[];if(!d.sharedTransactions)d.sharedTransactions=[];if(!d.theme)d.theme='forest';[d.p0,d.p1].forEach(p=>{if(!p.bags||!Array.isArray(p.bags))p.bags=[{name:'行李箱',items:[]}];p.bags.forEach(b=>{if(!b.items)b.items=[];b.items.forEach(i=>{if(typeof i==='string')i={name:i,checked:false,selected:false}})});if(!p.outfit||!Array.isArray(p.outfit))p.outfit=[];if(typeof p.notes!=='string')p.notes=''});return d}
+ let data=initData();
+ function saveData(){
+   data.names[0]=document.getElementById('nameInput0').value.trim()||'我';
+   data.names[1]=document.getElementById('nameInput1').value.trim()||'同伴';
+   data.tripName=document.getElementById('tripName').value;
+   data.tripTime=document.getElementById('tripTime').value;
+   data.tripNote=document.getElementById('tripNote').value;
+   data.theme=currentTheme;
+   if(currentPerson===0)data.p0.notes=document.getElementById('notesText').value;
+   else data.p1.notes=document.getElementById('notesText').value;
+   localStorage.setItem('tripV6',JSON.stringify(data));
+   updateWhoLabels();
+ }
+ function loadData(){
+   const s=localStorage.getItem('tripV6');
+   if(s){try{data=JSON.parse(s);data=ensureDataStructure(data)}catch(e){data=initData()}}
+   document.getElementById('nameInput0').value=data.names[0];
+   document.getElementById('nameInput1').value=data.names[1];
+   document.getElementById('tripName').value=data.tripName||'';
+   document.getElementById('tripTime').value=data.tripTime||'';
+   document.getElementById('tripNote').value=data.tripNote||'';
+   document.getElementById('pDate').value=getTodayDate();
+   document.getElementById('depositDate').value=getTodayDate();
+   document.getElementById('spendDate').value=getTodayDate();
+   setTheme(data.theme||'forest');
+   updateWhoLabels();
+   updatePersonTabs();
+   renderAllBags();
+   renderAllDays();
+   renderExpenseData();
+ }
+ function updateWhoLabels(){
+   document.getElementById('whoBags').textContent=data.names[currentPerson];
+   document.getElementById('whoOutfit').textContent=data.names[currentPerson];
+   document.getElementById('whoNotes').textContent=data.names[currentPerson];
+   document.getElementById('copyOtherBagsBtn').textContent=`📋 复制${data.names[currentPerson===0?1:0]}的行李`;
+ }
+ function updatePersonTabs(){
+   document.getElementById('personTab0').classList.toggle('active',currentPerson===0);
+   document.getElementById('personTab1').classList.toggle('active',currentPerson===1);
+   document.getElementById('notesText').value=currentPerson===0?data.p0.notes:data.p1.notes;
+ }
+ function now(){return currentPerson===0?data.p0:data.p1}
+ function otherPerson(){return currentPerson===0?data.p1:data.p0}
+ // ========== 皮肤与动画系统 ==========
+ const fallContainer=document.getElementById('fallContainer');
+ function clearParticles(){fallContainer.innerHTML=''}
+ function setTheme(name){
+   currentTheme=name;
+   document.body.className='theme-'+name;
+   document.querySelectorAll('.theme-btn').forEach(b=>b.classList.toggle('active',b.dataset.theme===name));
+   clearParticles();
+   createParticles(name);
+   saveData();
+ }
+ function createParticles(theme){
+   clearParticles();
+   const c=20;
+   if(theme==='night'){
+     const colors=['FFFFFF','#C8D8FF','#FFEECC'];
+     for(let i=0;i<120;i++){
+       const st=document.createElement('span');
+       st.className='star';
+       const sz=1.5+Math.random()*3.5;
+       const x=Math.random()*100;
+       const y=Math.random()*100;
+       const dur=2+Math.random()*4;
+       const del=Math.random()*3;
+       st.style.width=sz+'px';
+       st.style.height=sz+'px';
+       st.style.left=x+'%';
+       st.style.top=y+'%';
+       st.style.animationDuration=dur+'s';
+       st.style.animationDelay=del+'s';
+       st.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];
+       fallContainer.appendChild(st);
+     }
+   }else if(theme==='winter'){
+     for(let i=0;i<55;i++){
+       const el=document.createElement('span');
+       el.textContent='❄';
+       el.style.position='absolute';
+       el.style.top='-20px';
+       el.style.left=(Math.random()*100)+'%';
+       el.style.fontSize=(8+Math.random()*8)+'px';
+       el.style.color='rgba(200,220,255,.7)';
+       el.style.opacity='0.7';
+       el.style.animation='snowfall '+(12+Math.random()*10)+'s linear infinite';
+       el.style.animationDelay=(Math.random()*12)+'s';
+       fallContainer.appendChild(el);
+     }
+   }else if(theme==='autumn'){
+     const leaves=['🍂','🍁'];
+     for(let i=0;i<Math.floor(c*0.7);i++){
+       const el=document.createElement('span');
+       el.textContent=leaves[Math.floor(Math.random()*leaves.length)];
+       el.style.position='absolute';
+       el.style.top='-20px';
+       el.style.left=(Math.random()*100)+'%';
+       el.style.fontSize=(14+Math.random()*8)+'px';
+       el.style.opacity='0.55';
+       el.style.animation='leaffall '+(16+Math.random()*14)+'s linear infinite';
+       el.style.animationDelay=(Math.random()*15)+'s';
+       fallContainer.appendChild(el);
+     }
+   }else if(theme==='sakura'){
+     for(let i=0;i<Math.floor(c*0.65);i++){
+       const el=document.createElement('span');
+       el.textContent='🌸';
+       el.style.position='absolute';
+       el.style.top='-20px';
+       el.style.left=(Math.random()*100)+'%';
+       el.style.fontSize=(16+Math.random()*6)+'px';
+       el.style.opacity='0.45';
+       el.style.animation='sakurafall '+(18+Math.random()*16)+'s linear infinite';
+       el.style.animationDelay=(Math.random()*18)+'s';
+       fallContainer.appendChild(el);
+     }
+}else if(theme==='sea'){
+     for(let i=0;i<65;i++){
+       const dot=document.createElement('span');
+       dot.style.position='absolute';
+       dot.style.width='6px';
+       dot.style.height='6px';
+       dot.style.backgroundColor='rgba(70,130,180,0.8)';
+       dot.style.borderRadius='50%';
+       dot.style.left=(Math.random()*100)+'%';
+       dot.style.top='-10px';
+       dot.style.animation='seaSandFall 18s linear infinite';
+       dot.style.animationDelay=(Math.random()*18)+'s';
+       fallContainer.appendChild(dot);
+     }
+   }
+}
+ document.querySelectorAll('.theme-btn').forEach(b=>{b.addEventListener('click',()=>setTheme(b.dataset.theme))})
+ // ========== 页面切换 ==========
+ document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{
+   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');
+   const id=t.dataset.tab;
+   document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+   document.getElementById(id).classList.add('active');
+   if(id==='bags')renderAllBags();
+   if(id==='outfit')renderAllDays();
+ })})
+ document.querySelectorAll('.person-tab').forEach(t=>{t.addEventListener('click',()=>{
+   currentPerson=parseInt(t.dataset.person);
+   updatePersonTabs();
+   updateWhoLabels();
+   renderAllBags();
+   renderAllDays();
+ })})
+ // ========== 行李模块 ==========
+ document.getElementById('addBagBtn').addEventListener('click',addBagCategory);
+ document.getElementById('copyOtherBagsBtn').addEventListener('click',copyOtherPersonBags);
+ document.getElementById('toggleSelectBtn').addEventListener('click',()=>{
+   selectMode=!selectMode;
+   document.getElementById('copySelectedBtn').style.display=selectMode?'inline-flex':'none';
+   document.getElementById('toggleSelectBtn').textContent=selectMode?'✓ 完成':'☑️ 选择复制';
+   renderAllBags();
+ });
+ document.getElementById('copySelectedBtn').addEventListener('click',copySelectedItems);
+ function addBagCategory(){
+   const n=document.getElementById('newBagName').value.trim();
+   if(!n){showToast('请输入分类名称');return}
+   now().bags.push({name:n,items:[]});
+   document.getElementById('newBagName').value='';
+   renderAllBags();
+   saveData();
+ }
+ window.deleteBagCategory=function(idx){
+   if(!confirm('确定删除这个分类吗？'))return;
+   now().bags.splice(idx,1);
+   renderAllBags();
+   saveData();
+ };
+ window.addItem=function(bagIdx){
+   const n=prompt('请输入物品名称：');
+   if(!n)return;
+   now().bags[bagIdx].items.push({name:n,checked:false,selected:false});
+   renderAllBags();
+   saveData();
+ };
+ window.deleteItem=function(bagIdx,itemIdx){
+   now().bags[bagIdx].items.splice(itemIdx,1);
+   renderAllBags();
+   saveData();
+ };
+ window.toggleItem=function(bagIdx,itemIdx){
+   now().bags[bagIdx].items[itemIdx].checked=!now().bags[bagIdx].items[itemIdx].checked;
+   renderAllBags();
+   saveData();
+ };
+ window.toggleSelect=function(bagIdx,itemIdx){
+   now().bags[bagIdx].items[itemIdx].selected=!now().bags[bagIdx].items[itemIdx].selected;
+   renderAllBags();
+ };
+ window.moveItemUp=function(bagIdx,itemIdx){
+   if(itemIdx<=0)return;
+   const arr=now().bags[bagIdx].items;
+   [arr[itemIdx-1],arr[itemIdx]]=[arr[itemIdx],arr[itemIdx-1]];
+   renderAllBags();
+   saveData();
+ };
+ window.moveItemDown=function(bagIdx,itemIdx){
+   const arr=now().bags[bagIdx].items;
+   if(itemIdx>=arr.length-1)return;
+   [arr[itemIdx],arr[itemIdx+1]]=[arr[itemIdx+1],arr[itemIdx]];
+   renderAllBags();
+   saveData();
+ };
+ window.editItemName=function(bagIdx,itemIdx){
+   const newName=prompt('修改物品名称：',now().bags[bagIdx].items[itemIdx].name);
+   if(!newName||newName.trim()==='')return;
+   now().bags[bagIdx].items[itemIdx].name=newName.trim();
+   renderAllBags();
+   saveData();
+ };
+ function copyOtherPersonBags(){
+   if(!confirm(`确定复制${data.names[currentPerson===0?1:0]}的行李吗？`))return;
+   const o=otherPerson();
+   o.bags.forEach(b=>{
+     const exists=now().bags.find(x=>x.name===b.name);
+     if(exists){
+       b.items.forEach(it=>{
+         if(!exists.items.find(x=>x.name===it.name))exists.items.push({...it});
+       });
+     }else{
+       now().bags.push(JSON.parse(JSON.stringify(b)));
+     }
+   });
+   renderAllBags();
+   saveData();
+   showToast('✅ 复制成功');
+ }
+ function copySelectedItems(){
+   const sel=[];
+   now().bags.forEach((b,bi)=>{
+     b.items.filter(i=>i.selected).forEach(it=>sel.push({bag:b.name,name:it.name}));
+   });
+   if(sel.length===0){showToast('请先勾选要复制的物品');return}
+   const o=otherPerson();
+   let added=0;
+   sel.forEach(s=>{
+     let bg=o.bags.find(x=>x.name===s.bag);
+     if(!bg){
+       bg={name:s.bag,items:[]};
+       o.bags.push(bg);
+     }
+     if(!bg.items.find(x=>x.name===s.name)){
+       bg.items.push({name:s.name,checked:false,selected:false});
+       added++;
+     }
+   });
+   sel.forEach(s=>{
+     now().bags.forEach(b=>{
+       b.items.forEach(it=>{if(it.selected)it.selected=false;});
+     });
+   });
+   selectMode=false;
+   document.getElementById('copySelectedBtn').style.display='none';
+   document.getElementById('toggleSelectBtn').textContent='☑️ 选择复制';
+   renderAllBags();
+   saveData();
+   showToast(`✅ 成功复制 ${added} 件物品到${data.names[currentPerson===0?1:0]}的行李`);
+ }
+ function escapeHtml(text){
+   const div=document.createElement('div');
+   div.textContent=text||'';
+   return div.innerHTML;
+ }
+ function renderAllBags(){
+   const c=document.getElementById('bagCategories');
+   if(!now().bags.length){
+     c.innerHTML='<p class="empty-hint">还没有行李分类，点击上方「+新增分类」开始整理 ✨</p>';
+     updateProgress();
+     return;
+   }
+   c.innerHTML=now().bags.map((bag,bi)=>{
+     const itemsHtml=bag.items.map((item,ii)=>`
+       <div class="item-row">
+         ${selectMode
+           ?`<input type="checkbox" class="item-checkbox" ${item.selected?'checked':''} onchange="toggleSelect(${bi},${ii})">`
+           :`<input type="checkbox" class="item-checkbox" ${item.checked?'checked':''} onchange="toggleItem(${bi},${ii})">`
+         }
+         <span class="item-name ${item.checked&&!selectMode?'checked':''}"
+               ondblclick="editItemName(${bi},${ii})"
+               title="双击编辑">${escapeHtml(item.name)}</span>
+         <div class="item-actions">
+           <button class="btn-tiny" onclick="moveItemUp(${bi},${ii})" title="上移">⬆</button>
+           <button class="btn-tiny" onclick="moveItemDown(${bi},${ii})" title="下移">⬇</button>
+           <button class="btn btn-sm btn-outline-danger" onclick="deleteItem(${bi},${ii})" style="font-size:12px;padding:2px 6px;min-height:28px">删除</button>
+         </div>
+       </div>
+     `).join('');
+     const checked=bag.items.filter(i=>i.checked).length;
+     const total=bag.items.length;
+     const pct=total>0?Math.round(checked/total*100):0;
+     return `
+       <div class="bag-card">
+         <div class="bag-header">
+           <input type="text" class="bag-name" value="${escapeHtml(bag.name)}"
+                  onchange="now().bags[${bi}].name=this.value;saveData();renderAllBags()">
+           <span class="bag-progress-text">${checked}/${total} · ${pct}%</span>
+           <button class="btn btn-sm btn-outline-danger" onclick="deleteBagCategory(${bi})" style="font-size:12px;padding:2px 6px;min-height:28px">删除分类</button>
+         </div>
+         <div class="progress-bar" style="margin:8px 0 12px 0;height:8px">
+           <div class="progress-fill ${pct>=80?'green':pct>=40?'orange':'red'}" style="width:${pct}%"></div>
+         </div>
+         ${itemsHtml}
+         <div class="add-item-row">
+           <button class="btn btn-primary" style="flex:1" onclick="addItem(${bi})">+ 添加物品 · 双击可编辑名称</button>
+         </div>
+       </div>
+     `;
+   }).join('');
+   updateProgress();
+ }
+ function updateProgress(){
+   let totalChecked=0,totalAll=0;
+   now().bags.forEach(b=>{
+     totalChecked+=b.items.filter(i=>i.checked).length;
+     totalAll+=b.items.length;
+   });
+   document.getElementById('totalChecked').textContent=totalChecked;
+   document.getElementById('totalAll').textContent=totalAll;
+   const pct=totalAll>0?Math.round(totalChecked/totalAll*100):0;
+   document.getElementById('totalProgressBar').style.width=pct+'%';
+   document.getElementById('totalProgressBar').className='progress-fill '+(pct>=80?'green':pct>=40?'orange':'red');
+ }
+ // ========== 穿搭模块 ==========
+ document.getElementById('addDayBtn').addEventListener('click',()=>{
+   const dayName=prompt('这是第几天？','Day'+(now().outfit.length+1));
+   if(!dayName)return;
+   now().outfit.push({
+     name:dayName,outerfit:'',top:'',bottom:'',shoes:'',
+     accessories:[],others:[],images:{outer:'',top:'',bottom:'',shoes:'',accessories:[],others:[]}
+   });
+   renderAllDays();
+   saveData();
+ });
+ let currentDayIndex=null,currentSlotType=null;
+ window.deleteDay=function(idx){
+   if(!confirm('确定删除这天的穿搭吗？'))return;
+   now().outfit.splice(idx,1);
+   renderAllDays();
+   saveData();
+ };
+ window.copyPreviousDay=function(idx){
+   if(idx===0){showToast('前面还没有穿搭可复制哦');return;}
+   const prev=now().outfit[idx-1];
+   now().outfit[idx].outerfit=prev.outerfit;
+   now().outfit[idx].top=prev.top;
+   now().outfit[idx].bottom=prev.bottom;
+   now().outfit[idx].shoes=prev.shoes;
+   now().outfit[idx].accessories=[...prev.accessories];
+   now().outfit[idx].others=[...prev.others];
+   now().outfit[idx].images=JSON.parse(JSON.stringify(prev.images));
+   renderAllDays();
+   updatePreview(idx);
+   saveData();
+   showToast('✅ 已复制上一天穿搭');
+ };
+ window.openImageUpload=function(dayIdx,slotType){
+   currentDayIndex=dayIdx;
+   currentSlotType=slotType;
+   document.getElementById('imageUploadInput').click();
+ };
+ document.getElementById('imageUploadInput').addEventListener('change',function(e){
+   const file=e.target.files[0];
+   if(!file||currentDayIndex===null||!currentSlotType){
+     this.value='';
+     return;
+   }
+   const reader=new FileReader();
+   reader.onload=function(event){
+     const dataUrl=event.target.result;
+     const day=now().outfit[currentDayIndex];
+     if(['outer','top','bottom','shoes'].includes(currentSlotType)){
+       day.images[currentSlotType]=dataUrl;
+     }else if(currentSlotType==='accessory'){
+       day.images.accessories.push(dataUrl);
+     }else if(currentSlotType==='other'){
+       day.images.others.push(dataUrl);
+     }
+     renderAllDays();
+     updatePreview(currentDayIndex);
+     saveData();
+     showToast('✅ 图片已上传');
+   };
+   reader.readAsDataURL(file);
+   this.value='';
+ });
+ window.removeImage=function(dayIdx,type,index=null){
+   const day=now().outfit[dayIdx];
+   if(['outer','top','bottom','shoes'].includes(type)){
+     day.images[type]='';
+   }else if(type==='accessory'&&index!==null){
+     day.images.accessories.splice(index,1);
+   }else if(type==='other'&&index!==null){
+     day.images.others.splice(index,1);
+   }
+   renderAllDays();
+   updatePreview(dayIdx);
+   saveData();
+ };
+ function renderAllDays(){
+   const c=document.getElementById('dayList');
+   if(!now().outfit.length){
+     c.innerHTML='<p class="empty-hint">还没有穿搭计划，点击上方「+添加一天」开始搭配 ✨</p>';
+     clearPreview();
+     return;
+   }
+   c.innerHTML=now().outfit.map((day,idx)=>`
+     <div class="day-card">
+       <div class="day-header">
+         <input type="text" class="day-title" value="${escapeHtml(day.name)}"
+                onchange="now().outfit[${idx}].name=this.value;saveData()">
+         <div style="display:flex;gap:6px">
+           ${idx>0?`<button class="btn btn-sm btn-outline" onclick="copyPreviousDay(${idx})">📋 复制上一天</button>`:''}
+           <button class="btn btn-sm btn-outline-danger" onclick="deleteDay(${idx})">删除这天</button>
+         </div>
+       </div>
+       <div class="outfit-grid">
+         <div class="outfit-item">
+           <label>🧥 外套</label>
+           <input type="text" placeholder="例如：风衣" value="${escapeHtml(day.outerfit||'')}"
+                  onchange="now().outfit[${idx}].outerfit=this.value;saveData();updatePreview(${idx})">
+           <div class="upload-btn-wrapper">
+             ${day.images?.outer
+               ?`<img src="${day.images.outer}" class="preview-img show"><button class="btn btn-sm btn-outline-danger" onclick="removeImage(${idx},'outer')">移除</button>`
+               :`<button class="upload-btn" onclick="openImageUpload(${idx},'outer');return false;">📷 上传图片</button>`
+             }
+           </div>
+         </div>
+         <div class="outfit-item">
+           <label>👕 上衣</label>
+           <input type="text" placeholder="例如：白色T恤" value="${escapeHtml(day.top||'')}"
+                  onchange="now().outfit[${idx}].top=this.value;saveData();updatePreview(${idx})">
+           <div class="upload-btn-wrapper">
+             ${day.images?.top
+               ?`<img src="${day.images.top}" class="preview-img show"><button class="btn btn-sm btn-outline-danger" onclick="removeImage(${idx},'top')">移除</button>`
+               :`<button class="upload-btn" onclick="openImageUpload(${idx},'top');return false;">📷 上传图片</button>`
+             }
+           </div>
+         </div>
+         <div class="outfit-item">
+           <label>👖 下装</label>
+           <input type="text" placeholder="例如：牛仔裤" value="${escapeHtml(day.bottom||'')}"
+                  onchange="now().outfit[${idx}].bottom=this.value;saveData();updatePreview(${idx})">
+           <div class="upload-btn-wrapper">
+             ${day.images?.bottom
+               ?`<img src="${day.images.bottom}" class="preview-img show"><button class="btn btn-sm btn-outline-danger" onclick="removeImage(${idx},'bottom')">移除</button>`
+               :`<button class="upload-btn" onclick="openImageUpload(${idx},'bottom');return false;">📷 上传图片</button>`
+             }
+           </div>
+         </div>
+         <div class="outfit-item">
+           <label>👟 鞋子</label>
+           <input type="text" placeholder="例如：小白鞋" value="${escapeHtml(day.shoes||'')}"
+                  onchange="now().outfit[${idx}].shoes=this.value;saveData();updatePreview(${idx})">
+           <div class="upload-btn-wrapper">
+             ${day.images?.shoes
+               ?`<img src="${day.images.shoes}" class="preview-img show"><button class="btn btn-sm btn-outline-danger" onclick="removeImage(${idx},'shoes')">移除</button>`
+               :`<button class="upload-btn" onclick="openImageUpload(${idx},'shoes');return false;">📷 上传图片</button>`
+             }
+           </div>
+         </div>
+       </div>
+       <div class="outfit-item">
+         <label>🎀 配饰（逗号分隔）</label>
+         <input type="text" placeholder="例如：墨镜,项链,帽子" value="${escapeHtml((day.accessories||[]).join(', '))}"
+                onchange="now().outfit[${idx}].accessories=this.value.split(',').map(x=>x.trim()).filter(x=>x);saveData()">
+         <div class="upload-btn-wrapper">
+           <button class="upload-btn" onclick="openImageUpload(${idx},'accessory');return false;">📷 添加配饰图</button>
+           <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+             ${(day.images?.accessories||[]).map((img,i)=>`<div style="position:relative"><img src="${img}" style="width:50px;height:50px;object-fit:cover;border-radius:4px;border:1px solid var(--accent-border)"><button onclick="removeImage(${idx},'accessory',${i})" style="position:absolute;top:-4px;right:-4px;background:#e74c3c;color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:12px;cursor:pointer;padding:0">×</button></div>`).join('')}
+           </div>
+         </div>
+       </div>
+       <div class="outfit-item">
+         <label>📌 其他（逗号分隔）</label>
+         <input type="text" placeholder="例如：雨伞,环保袋" value="${escapeHtml((day.others||[]).join(', '))}"
+                onchange="now().outfit[${idx}].others=this.value.split(',').map(x=>x.trim()).filter(x=>x);saveData()">
+         <div class="upload-btn-wrapper">
+           <button class="upload-btn" onclick="openImageUpload(${idx},'other');return false;">📷 添加其他图</button>
+           <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+             ${(day.images?.others||[]).map((img,i)=>`<div style="position:relative"><img src="${img}" style="width:50px;height:50px;object-fit:cover;border-radius:4px;border:1px solid var(--accent-border)"><button onclick="removeImage(${idx},'other',${i})" style="position:absolute;top:-4px;right:-4px;background:#e74c3c;color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:12px;cursor:pointer;padding:0">×</button></div>`).join('')}
+           </div>
+         </div>
+       </div>
+     </div>
+   `).join('');
+   if(now().outfit.length>0)updatePreview(0);
+ }
+ function updatePreview(dayIdx){
+   if(!now().outfit[dayIdx])return;
+   const day=now().outfit[dayIdx];
+   const previewOuter=document.getElementById('previewOuter');
+   const previewTop=document.getElementById('previewTop');
+   const previewBottom=document.getElementById('previewBottom');
+   const previewShoes=document.getElementById('previewShoes');
+   const previewAccessories=document.getElementById('previewAccessories');
+   const previewOthers=document.getElementById('previewOthers');
+   previewOuter.innerHTML=day.images?.outer
+     ?`<img src="${day.images.outer}" alt="外套">`
+     :`<span>${day.outerfit||'外套'}</span>`;
+   previewTop.innerHTML=day.images?.top
+     ?`<img src="${day.images.top}" alt="上衣">`
+     :`<span>${day.top||'上衣'}</span>`;
+   previewBottom.innerHTML=day.images?.bottom
+     ?`<img src="${day.images.bottom}" alt="下装">`
+     :`<span>${day.bottom||'下装'}</span>`;
+   previewShoes.innerHTML=day.images?.shoes
+     ?`<img src="${day.images.shoes}" alt="鞋子">`
+     :`<span>${day.shoes||'鞋子'}</span>`;
+   const accImgs=day.images?.accessories||[];
+   const accText=day.accessories||[];
+   previewAccessories.innerHTML=`<p style="font-size:12px;color:var(--text-secondary);margin-bottom:4px">配饰</p>`+
+     (accImgs.length>0
+       ?`<div style="display:flex;flex-direction:column;gap:4px">${accImgs.map(img=>`<img src="${img}" style="width:60px;height:60px;object-fit:cover;border-radius:4px;border:1px solid var(--accent-border)">`).join('')}</div>`
+       :accText.length>0?`<div style="font-size:13px;line-height:1.5">${accText.join('<br>')}</div>`:`<span style="font-size:11px;color:var(--text-secondary)">暂无</span>`);
+   const othImgs=day.images?.others||[];
+   const othText=day.others||[];
+   previewOthers.innerHTML=`<p style="font-size:12px;color:var(--text-secondary);margin-bottom:4px">其他</p>`+
+     (othImgs.length>0
+       ?`<div style="display:flex;flex-direction:column;gap:4px">${othImgs.map(img=>`<img src="${img}" style="width:60px;height:60px;object-fit:cover;border-radius:4px;border:1px solid var(--accent-border)">`).join('')}</div>`
+       :othText.length>0?`<div style="font-size:13px;line-height:1.5">${othText.join('<br>')}</div>`:`<span style="font-size:11px;color:var(--text-secondary)">暂无</span>`);
+ }
+ function clearPreview(){
+   document.getElementById('previewOuter').innerHTML='<span>外套</span>';
+   document.getElementById('previewTop').innerHTML='<span>上衣</span>';
+   document.getElementById('previewBottom').innerHTML='<span>下装</span>';
+   document.getElementById('previewShoes').innerHTML='<span>鞋子</span>';
+   document.getElementById('previewAccessories').innerHTML='<p style="font-size:12px;color:var(--text-secondary)">配饰</p><span style="font-size:11px;color:var(--text-secondary)">暂无</span>';
+   document.getElementById('previewOthers').innerHTML='<p style="font-size:12px;color:var(--text-secondary)">其他</p><span style="font-size:11px;color:var(--text-secondary)">暂无</span>';
+ }
+ // ========== 开销模块 ==========
+ document.querySelectorAll('.exp-tab').forEach(t=>{t.addEventListener('click',()=>{
+   document.querySelectorAll('.exp-tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');
+   document.getElementById('exp-personal').style.display=t.dataset.exptab==='personal'?'block':'none';
+   document.getElementById('exp-shared').style.display=t.dataset.exptab==='shared'?'block':'none';
+   document.getElementById('exp-all').style.display=t.dataset.exptab==='all'?'block':'none';
+   renderExpenseData();
+ })});
+ document.getElementById('depositToggle').addEventListener('click',()=>{
+   document.getElementById('depositToggle').classList.add('active');
+   document.getElementById('spendToggle').classList.remove('active');
+   document.getElementById('depositForm').classList.add('active');
+   document.getElementById('spendForm').classList.remove('active');
+ });
+ document.getElementById('spendToggle').addEventListener('click',()=>{
+   document.getElementById('spendToggle').classList.add('active');
+   document.getElementById('depositToggle').classList.remove('active');
+   document.getElementById('spendForm').classList.add('active');
+   document.getElementById('depositForm').classList.remove('active');
+ });
+ document.getElementById('addPersonalBtn').addEventListener('click',addPersonalExpense);
+ document.getElementById('addDepositBtn').addEventListener('click',addSharedDeposit);
+ document.getElementById('addSpendBtn').addEventListener('click',addSharedSpend);
+ document.getElementById('copyLedgerBtn').addEventListener('click',copySharedLedger);
+ document.getElementById('applyFilterBtn').addEventListener('click',()=>{
+   expenseFilter.from=document.getElementById('filterDateFrom').value;
+   expenseFilter.to=document.getElementById('filterDateTo').value;
+   renderPersonalRecords();
+ });
+ document.getElementById('clearFilterBtn').addEventListener('click',()=>{
+   expenseFilter.from='';expenseFilter.to='';
+   document.getElementById('filterDateFrom').value='';
+   document.getElementById('filterDateTo').value='';
+   renderPersonalRecords();
+ });
+ document.getElementById('applyAllBtn').addEventListener('click',()=>{
+   allExpenseFilter.from=document.getElementById('allFilterFrom').value;
+   allExpenseFilter.to=document.getElementById('allFilterTo').value;
+   renderAllRecords();
+ });
+ document.getElementById('clearAllBtn').addEventListener('click',()=>{
+   allExpenseFilter.from='';allExpenseFilter.to='';
+   document.getElementById('allFilterFrom').value='';
+   document.getElementById('allFilterTo').value='';
+   renderAllRecords();
+ });
+ function addPersonalExpense(){
+   const date=document.getElementById('pDate').value;
+   const owner=document.getElementById('pOwner').value;
+   const cat=document.getElementById('pCategory').value;
+   const amt=parseFloat(document.getElementById('pAmount').value)||0;
+   const note=document.getElementById('pNote').value.trim();
+   if(!date||amt<=0){showToast('请填写完整信息');return}
+   data.personalExpenses.push({id:Date.now(),type:'personal',date,owner,category:cat,amount:amt,note});
+   document.getElementById('pAmount').value='';
+   document.getElementById('pNote').value='';
+   saveData();
+   renderExpenseData();
+   showToast('✅ 记录已保存');
+ }
+ function addSharedDeposit(){
+   const date=document.getElementById('depositDate').value;
+   const amt=parseFloat(document.getElementById('depositAmount').value)||0;
+   const who=document.getElementById('depositor').value;
+   const note=document.getElementById('depositNote').value.trim();
+   if(!date||amt<=0){showToast('请填写完整信息');return}
+   data.sharedTransactions.push({id:Date.now(),type:'deposit',date,amount:amt,who,note});
+   document.getElementById('depositAmount').value='';
+   document.getElementById('depositNote').value='';
+   saveData();
+   renderSharedRecords();
+   updateSharedBalance();
+   showToast('✅ 存入成功');
+ }
+ function addSharedSpend(){
+   const date=document.getElementById('spendDate').value;
+   const cat=document.getElementById('spendCategory').value;
+   const amt=parseFloat(document.getElementById('spendAmount').value)||0;
+   const who=document.getElementById('payer').value;
+   const note=document.getElementById('spendNote').value.trim();
+   if(!date||amt<=0){showToast('请填写完整信息');return}
+   data.sharedTransactions.push({id:Date.now(),type:'spend',date,category:cat,amount:amt,who,note});
+   document.getElementById('spendAmount').value='';
+   document.getElementById('spendNote').value='';
+   saveData();
+   renderSharedRecords();
+   updateSharedBalance();
+   showToast('✅ 记录已保存');
+ }
+ function copySharedLedger(){
+   let totalIn=0,totalOut=0;
+   let text='🤝 共用资金池 — 流水记录\n';
+   text+='━━━━━━━━━━━━━━━━━━━━━━\n';
+   data.sharedTransactions.forEach(t=>{
+     const sign=t.type==='deposit'?'+':'-';
+     const label=t.type==='deposit'?'💰 存入':'💳 支出';
+     const person=t.who==='me'?data.names[0]:data.names[1];
+     text+=`${t.date} | ${label} | ${person} | ${sign}$${t.amount.toFixed(2)}`;
+     if(t.note)text+=` | ${t.note}`;
+     if(t.category)text+=` [${t.category}]`;
+     text+='\n';
+     if(t.type==='deposit')totalIn+=t.amount;
+     else totalOut+=t.amount;
+   });
+   const balance=totalIn-totalOut;
+   text+='━━━━━━━━━━━━━━━━━━━━━━\n';
+   text+=`累计存入: $${totalIn.toFixed(2)}\n`;
+   text+=`累计支出: $${totalOut.toFixed(2)}\n`;
+   text+=`当前余额: $${balance.toFixed(2)}\n`;
+   text+='━━━━━━━━━━━━━━━━━━━━━━\n';
+   text+=`复制时间: ${new Date().toLocaleString()}`;
+   navigator.clipboard.writeText(text).then(()=>{
+     showToast('✅ 已复制完整流水账');
+   }).catch(()=>{
+     const ta=document.createElement('textarea');
+     ta.value=text;
+     document.body.appendChild(ta);
+     ta.select();
+     document.execCommand('copy');
+     document.body.removeChild(ta);
+     showToast('✅ 已复制完整流水账');
+   });
+ }
+ window.deletePersonalExpense=function(id){
+   if(!confirm('确定删除这条记录吗？'))return;
+   data.personalExpenses=data.personalExpenses.filter(x=>x.id!==id);
+   saveData();
+   renderExpenseData();
+ };
+ window.deleteSharedTransaction=function(id){
+   if(!confirm('确定删除这条记录吗？'))return;
+   data.sharedTransactions=data.sharedTransactions.filter(x=>x.id!==id);
+   saveData();
+   renderSharedRecords();
+   updateSharedBalance();
+ };
+ function updateSharedBalance(){
+   let totalIn=0,totalOut=0;
+   data.sharedTransactions.forEach(t=>{
+     if(t.type==='deposit')totalIn+=t.amount;
+     else totalOut+=t.amount;
+   });
+   const balance=totalIn-totalOut;
+   document.getElementById('sharedBalance').textContent='$'+balance.toFixed(2);
+   document.getElementById('totalIn').textContent='$'+totalIn.toFixed(2);
+   document.getElementById('totalOut').textContent='$'+totalOut.toFixed(2);
+   const pct=totalIn>0?Math.round((totalOut/totalIn)*100):0;
+   document.getElementById('usagePercent').textContent=pct+'%';
+   document.getElementById('sharedProgress').style.width=pct+'%';
+   document.getElementById('sharedProgress').className='progress-fill '+(pct<=60?'green':pct<=85?'orange':'red');
+   document.getElementById('lowBalanceWarning').classList.toggle('show',balance<=totalIn*0.15&&totalIn>0);
+ }
+ function renderExpenseData(){
+   renderPersonalRecords();
+   renderSharedRecords();
+   updateSharedBalance();
+   renderAllRecords();
+ }
+ function renderPersonalRecords(){
+   let list=data.personalExpenses.slice();
+   if(expenseFilter.from)list=list.filter(x=>x.date>=expenseFilter.from);
+   if(expenseFilter.to)list=list.filter(x=>x.date<=expenseFilter.to);
+   list.sort((a,b)=>b.date.localeCompare(a.date));
+   let myTotal=0,partnerTotal=0;
+   list.forEach(r=>{if(r.owner==='me')myTotal+=r.amount;else partnerTotal+=r.amount;});
+   document.getElementById('myPersonalTotal').textContent='$'+myTotal.toFixed(2);
+   document.getElementById('partnerPersonalTotal').textContent='$'+partnerTotal.toFixed(2);
+   const c=document.getElementById('personalRecordList');
+   if(!list.length){c.innerHTML='<p class="empty-hint">暂无记录</p>';return}
+   c.innerHTML=list.map(r=>{
+     const person=r.owner==='me'?data.names[0]:data.names[1];
+     return `
+       <div class="record-item">
+         <div class="record-left">
+           <div><strong>${r.category}</strong> <span class="record-type-tag tag-personal">${person}</span></div>
+           <div class="record-meta">${r.date}${r.note?' · '+escapeHtml(r.note):''}</div>
+         </div>
+         <div class="record-right">
+           <div class="record-amount expense">$${r.amount.toFixed(2)}</div>
+           <button class="btn btn-sm btn-outline-danger" style="font-size:12px;min-height:28px;padding:2px 6px" onclick="deletePersonalExpense(${r.id})">删除</button>
+         </div>
+       </div>
+     `;
+   }).join('');
+ }
+ function renderSharedRecords(){
+   const list=data.sharedTransactions.slice().sort((a,b)=>b.date.localeCompare(a.date));
+   const c=document.getElementById('sharedRecordList');
+   if(!list.length){c.innerHTML='<p class="empty-hint">暂无记录</p>';return}
+   c.innerHTML=list.map(r=>{
+     const person=r.who==='me'?data.names[0]:data.names[1];
+     const sign=r.type==='deposit'?'+':'-';
+     return `
+       <div class="record-item">
+         <div class="record-left">
+           <div><strong>${r.type==='deposit'?'💰 存入':'💳 '+r.category}</strong> <span class="record-type-tag tag-shared">${person}</span></div>
+           <div class="record-meta">${r.date}${r.note?' · '+escapeHtml(r.note):''}</div>
+         </div>
+         <div class="record-right">
+           <div class="record-amount ${r.type==='deposit'?'income':'expense'}">${sign}$${r.amount.toFixed(2)}</div>
+           <button class="btn btn-sm btn-outline-danger" style="font-size:12px;min-height:28px;padding:2px 6px" onclick="deleteSharedTransaction(${r.id})">删除</button>
+         </div>
+       </div>
+     `;
+   }).join('');
+ }
+ function renderAllRecords(){
+   let allPersonal=data.personalExpenses.map(x=>({...x,displayType:'personal'})||[]);
+   let allShared=data.sharedTransactions.map(x=>({
+     id:x.id+'s',displayType:'shared',date:x.date,
+     category:x.type==='deposit'?'💰 存入':x.category,
+     amount:x.amount,type:x.type,who:x.who,note:x.note
+   }))||[];
+   let list=[...allPersonal,...allShared];
+   if(allExpenseFilter.from)list=list.filter(x=>x.date>=allExpenseFilter.from);
+   if(allExpenseFilter.to)list=list.filter(x=>x.date<=allExpenseFilter.to);
+   list.sort((a,b)=>b.date.localeCompare(a.date));
+   const c=document.getElementById('allRecordList');
+   if(!list.length){c.innerHTML='<p class="empty-hint">暂无记录</p>';return}
+   c.innerHTML=list.map(r=>{
+     const sign=r.type==='deposit'?'+':'-';
+     const person=(r.who||r.owner)==='me'?data.names[0]:data.names[1];
+     return `
+       <div class="record-item">
+         <div class="record-left">
+           <div><strong>${r.category}</strong> <span class="record-type-tag ${r.displayType==='personal'?'tag-personal':'tag-shared'}">${r.displayType==='personal'?'个人':'资金池'}</span></div>
+           <div class="record-meta">${r.date} · ${person}${r.note?' · '+escapeHtml(r.note):''}</div>
+         </div>
+         <div class="record-right">
+           <div class="record-amount ${r.type==='deposit'?'income':'expense'}">${sign}$${r.amount.toFixed(2)}</div>
+         </div>
+       </div>
+     `;
+   }).join('');
+ }
+ // ========== 数据管理 ==========
+ document.getElementById('exportBtn').addEventListener('click',exportData);
+ document.getElementById('importBtn').addEventListener('click',()=>document.getElementById('importFileInput').click());
+ document.getElementById('importFileInput').addEventListener('change',importData);
+ document.getElementById('resetBtn').addEventListener('click',resetData);
+ function exportData(){
+   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+   const url=URL.createObjectURL(blob);
+   const a=document.createElement('a');
+   a.href=url;
+   a.download=`旅行备份_${(data.tripName||'记录').substring(0,10)}_${new Date().toISOString().split('T')[0]}.json`;
+   document.body.appendChild(a);
+   a.click();
+   document.body.removeChild(a);
+   URL.revokeObjectURL(url);
+   showToast('✅ 备份已下载');
+ }
+ function importData(e){
+   const file=e.target.files[0];
+   if(!file)return;
+   if(!confirm('⚠️ 导入会覆盖当前所有数据！确定继续吗？')){e.target.value='';return}
+   const reader=new FileReader();
+   reader.onload=function(event){
+     try{
+       const newData=JSON.parse(event.target.result);
+       data=ensureDataStructure(newData);
+       localStorage.setItem('tripV6',JSON.stringify(data));
+       location.reload();
+     }catch(err){
+       showToast('文件读取失败，请确认是正确的备份文件');
+     }
+   };
+   reader.readAsText(file);
+   e.target.value='';
+ }
+ function resetData(){
+   if(!confirm('⚠️ 确定清空所有记录吗？此操作不可撤销！'))return;
+   const names=data.names;
+   const theme=data.theme;
+   data=initData();
+   data.names=names;
+   data.theme=theme;
+   localStorage.setItem('tripV6',JSON.stringify(data));
+   loadData();
+   showToast('✅ 已重置，新旅行开始啦 ✨');
+ }
+ // ========== 初始化 ==========
+ loadData();
+ document.getElementById('notesText').addEventListener('input',()=>{
+   if(currentPerson===0)data.p0.notes=document.getElementById('notesText').value;
+   else data.p1.notes=document.getElementById('notesText').value;
+   saveData();
+ });
+ setTimeout(()=>{
+   if(data.theme)setTheme(data.theme);
+ },100);
+ </script>
+ </body>
+ </html>
+
