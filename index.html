@@ -254,7 +254,12 @@ body.theme-autumn{
  .summary-item{background:var(--accent-light);padding:16px 12px;border-radius:10px;text-align:center}
  .summary-label{font-size:14px;color:var(--text-secondary)}
  .summary-value{font-size:20px;font-weight:600;margin-top:6px;color:var(--accent)}
- </style>
+#notesText {
+   min-height:160px;
+   max-height:320px;
+   overflow-y:auto;
+} 
+</style>
  </head>
  <body class="theme-forest">
  <div class="fall-container" id="fallContainer"></div>
@@ -313,7 +318,16 @@ body.theme-autumn{
  </div>
  <div class="tab-content" id="outfit">
  <h2>每日穿搭 — <span id="whoOutfit">我</span></h2>
- <div class="add-day-row"><button class="btn btn-primary" id="addDayBtn">+ 添加一天</button></div>
+<div style="margin-bottom:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+   <label style="margin:0">预览模式：</label>
+   <select id="outfitPreviewMode" style="flex:1;max-width:180px;padding:8px;border-radius:8px;border:1px solid var(--accent-border);background:var(--bg-secondary);color:var(--text-primary)">
+     <option value="single">👗 仅显示当天</option>
+     <option value="all">📋 查看全部天数</option>
+   </select>
+   <button id="manualSaveOutfit" class="btn btn-sm" style="min-height:36px;padding:8px 12px">💾 保存</button>
+   <span id="outfitSavedTip" style="color:var(--accent);font-size:14px;display:none">✅ 已保存</span>
+ </div>
+<div class="add-day-row"><button class="btn btn-primary" id="addDayBtn">+ 添加一天</button></div>
  <div id="dayList"></div>
  <div class="preview-area">
  <h3>👗 今日搭配预览</h3>
@@ -328,8 +342,13 @@ body.theme-autumn{
  <div class="preview-side" id="previewOthers"><p style="font-size:12px;color:var(--text-secondary)">其他</p></div>
  </div>
  </div>
+<!-- 全部天数预览区 -->
+ <div id="allDaysPreview" style="margin-top:24px;display:none">
+   <h3>📋 全部天数穿搭预览</h3>
+   <div id="allDaysPreviewContent"></div>
  </div>
- <div class="tab-content" id="expense">
+ </div>
+<div class="tab-content" id="expense">
  <h2>💰 旅行开销</h2>
  <div class="expense-tabs">
  <button class="exp-tab active" data-exptab="personal">👤 个人花费</button>
@@ -449,8 +468,6 @@ body.theme-autumn{
    data.tripTime=document.getElementById('tripTime').value;
    data.tripNote=document.getElementById('tripNote').value;
    data.theme=currentTheme;
-   if(currentPerson===0)data.p0.notes=document.getElementById('notesText').value;
-   else data.p1.notes=document.getElementById('notesText').value;
    localStorage.setItem('tripV6',JSON.stringify(data));
    updateWhoLabels();
  }
@@ -780,6 +797,7 @@ body.theme-autumn{
    });
    renderAllDays();
    saveData();
+   showOutfitSaved();
  });
  let currentDayIndex=null,currentSlotType=null;
  window.deleteDay=function(idx){
@@ -787,6 +805,7 @@ body.theme-autumn{
    now().outfit.splice(idx,1);
    renderAllDays();
    saveData();
+   showOutfitSaved();
  };
  window.copyPreviousDay=function(idx){
    if(idx===0){showToast('前面还没有穿搭可复制哦');return;}
@@ -801,6 +820,7 @@ body.theme-autumn{
    renderAllDays();
    updatePreview(idx);
    saveData();
+   showOutfitSaved();
    showToast('✅ 已复制上一天穿搭');
  };
  window.openImageUpload=function(dayIdx,slotType){
@@ -828,6 +848,7 @@ body.theme-autumn{
      renderAllDays();
      updatePreview(currentDayIndex);
      saveData();
+     showOutfitSaved();
      showToast('✅ 图片已上传');
    };
    reader.readAsDataURL(file);
@@ -845,6 +866,7 @@ body.theme-autumn{
    renderAllDays();
    updatePreview(dayIdx);
    saveData();
+   showOutfitSaved();
  };
  function renderAllDays(){
    const c=document.getElementById('dayList');
@@ -854,7 +876,7 @@ body.theme-autumn{
      return;
    }
    c.innerHTML=now().outfit.map((day,idx)=>`
-     <div class="day-card">
+     <div class="day-card"id="day-card-${idx}"style="cursor:pointer;margin-bottom:8px;border2pxsolid transparent; " onclick="selectDay(${idx})">
        <div class="day-header">
          <input type="text" class="day-title" value="${escapeHtml(day.name)}"
                 onchange="now().outfit[${idx}].name=this.value;saveData()">
@@ -1222,7 +1244,11 @@ body.theme-autumn{
    const url=URL.createObjectURL(blob);
    const a=document.createElement('a');
    a.href=url;
-   a.download=`旅行备份_${(data.tripName||'记录').substring(0,10)}_${new Date().toISOString().split('T')[0]}.json`;
+const d = new Date();
+ const day = String(d.getDate()).padStart(2,'0');
+ const month = String(d.getMonth()+1).padStart(2,'0');
+ const year = d.getFullYear();
+ a.download = `旅行备份_${(data.tripName||'记录').substring(0,10)}_${day}-${month}-${year}.json`;
    document.body.appendChild(a);
    a.click();
    document.body.removeChild(a);
@@ -1258,17 +1284,152 @@ body.theme-autumn{
    loadData();
    showToast('✅ 已重置，新旅行开始啦 ✨');
  }
- // ========== 初始化 ==========
+// ========== 初始化 ==========
  loadData();
- document.getElementById('notesText').addEventListener('input',()=>{
-   if(currentPerson===0)data.p0.notes=document.getElementById('notesText').value;
-   else data.p1.notes=document.getElementById('notesText').value;
+ const notesTextarea = document.getElementById('notesText');
+ let saveNotesTimeout = null;
+ function saveNotesNow() {
+   if (currentPerson === 0) data.p0.notes = notesTextarea.value;
+   else data.p1.notes = notesTextarea.value;
    saveData();
+   const saveTip = notesTextarea.nextElementSibling;
+   if(saveTip) saveTip.textContent = "✅ 已保存";
+   setTimeout(()=>{ if(saveTip) saveTip.textContent = "✅ 自动保存在本地"; },1200);
+ }
+ function refreshNoteDisplay() {
+   notesTextarea.value = currentPerson === 0 ? (data.p0.notes || '') : (data.p1.notes || '');
+ }
+ // 页面载入时读回
+ refreshNoteDisplay();
+ notesTextarea.addEventListener('input', function() {
+   clearTimeout(saveNotesTimeout);
+   saveNotesTimeout = setTimeout(saveNotesNow, 800);
+ });
+ notesTextarea.addEventListener('keydown', function(e) {
+   if (e.key === 'Enter' && !e.shiftKey) {
+     e.preventDefault();
+     saveNotesNow();
+   }
  });
  setTimeout(()=>{
    if(data.theme)setTheme(data.theme);
  },100);
- </script>
+// 旅行信息自动保存
+ const tripNoteEl = document.getElementById('tripNote');
+ const tripNameEl = document.getElementById('tripName');
+ const tripTimeEl = document.getElementById('tripTime');
+ let tripSaveTimer = null;
+ function scheduleTripSave() {
+   clearTimeout(tripSaveTimer);
+   tripSaveTimer = setTimeout(() => {
+     // 先更新 data 对象
+     data.tripName = tripNameEl ? tripNameEl.value : '';
+     data.tripTime = tripTimeEl ? tripTimeEl.value : '';
+     data.tripNote = tripNoteEl ? tripNoteEl.value : '';
+     // 直接存到本地
+     localStorage.setItem('tripV6', JSON.stringify(data));
+     showToast('✅ 行程信息已保存');
+   }, 800);
+ }
+ // 绑定输入事件
+ [tripNameEl, tripTimeEl, tripNoteEl].forEach(el => {
+   if (el) el.addEventListener('input', scheduleTripSave);
+ });
+// ========== 穿搭：单天预览 + 全部预览切换 + 点击某天更新预览 ==========
+ let outfitPreviewMode = 'single';
+ let selectedDayIndex = 0;
+ const modeSelect = document.getElementById('outfitPreviewMode');
+ if (modeSelect) {
+   modeSelect.addEventListener('change', function () {
+     outfitPreviewMode = this.value;
+     updatePreviewDisplay();
+   });
+ }
+ // 点击某一天 → 更新预览 + 高亮
+ window.selectDay = function(idx) {
+   selectedDayIndex = idx;
+   updateDayCardStyles();
+   if (outfitPreviewMode === 'single') {
+     updatePreview(idx);
+   } else {
+     renderAllDaysPreview();
+   }
+ };
+ function updatePreviewDisplay() {
+   const singlePreview = document.querySelector('.preview-area');
+   const allPreview = document.getElementById('allDaysPreview');
+   
+   if (outfitPreviewMode === 'all') {
+     if (singlePreview) singlePreview.style.display = 'none';
+     if (allPreview) allPreview.style.display = 'block';
+     renderAllDaysPreview();
+   } else {
+     if (singlePreview) singlePreview.style.display = 'block';
+     if (allPreview) allPreview.style.display = 'none';
+     if (now().outfit[selectedDayIndex]) {
+       updatePreview(selectedDayIndex);
+     }
+   }
+ }
+ function updateDayCardStyles() {
+   const allCards = document.querySelectorAll('.day-card');
+   allCards.forEach((card, i) => {
+     card.style.borderColor = (i === selectedDayIndex) ? 'var(--accent)' : 'transparent';
+     card.style.backgroundColor = (i === selectedDayIndex) ? 'var(--accent-light)' : 'transparent';
+   });
+ }
+ function renderAllDaysPreview() {
+   const container = document.getElementById('allDaysPreviewContent');
+   if (!container) return;
+   
+   if (!now().outfit.length) {
+     container.innerHTML = '<p style="color:var(--text-secondary)">还没有穿搭计划，先添加一天吧 ✨</p>';
+     return;
+   }
+   
+   container.innerHTML = now().outfit.map((day, idx) => {
+     return `
+     <div style="border:1px solid var(--accent-border);border-radius:12px;padding:16px;margin-bottom:16px;background:var(--card-bg)">
+       <h4 style="margin:0 0 12px 0;color:var(--accent)">${escapeHtml(day.name)}</h4>
+       <div style="display:flex;gap:12px;flex-wrap:wrap">
+         ${['outer','top','bottom','shoes'].map(slot=>{
+           const label = {outer:'外套',top:'上衣',bottom:'下装',shoes:'鞋子'}[slot];
+           const img = day.images?.[slot];
+           const text = day[slot] || '';
+           return `<div style="text-align:center;min-width:80px">
+             <div style="font-size:12px;color:var(--text-secondary);margin-bottom:6px">${label}</div>
+             ${img 
+               ? `<img src="${img}" style="width:70px;height:70px;object-fit:cover;border-radius:6px;border:1px solid var(--accent-border)">`
+               : `<div style="width:70px;height:70px;display:flex;align-items:center;justify-content:center;border:1px dashed var(--accent-border);border-radius:6px;font-size:13px;color:var(--text-secondary)">${text||'—'}</div>`
+             }
+           </div>`;
+         }).join('')}
+       </div>
+     </div>`;
+   }).join('');
+ }
+ document.addEventListener('DOMContentLoaded', function(){
+   setTimeout(() => {
+     if (now().outfit.length > 0) {
+       selectDay(0);
+     }
+   }, 100);
+ });
+// 手动保存按钮 — 保存当天穿搭 + 显示提示
+ document.getElementById('manualSaveOutfit')?.addEventListener('click', function(){
+   saveData();
+   showOutfitSaved();
+   // 给按钮个按下反馈
+   const btn = this;
+   const originalText = btn.innerHTML;
+   btn.innerHTML = '✅ 已保存';
+   btn.style.opacity = '0.7';
+   setTimeout(()=>{
+     btn.innerHTML = originalText;
+     btn.style.opacity = '1';
+   }, 1500);
+ });
+</script>
  </body>
  </html>
 
